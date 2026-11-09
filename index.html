@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jebadiah Parillo · Controls Automation Engineer</title>
+  <meta name="description" content="Jebadiah Parillo, controls automation engineer: Siemens PLCs, Qt/QML control software, embedded backends, UL 508A panel design." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = { theme: { extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], mono: ['JetBrains Mono', 'ui-monospace', 'monospace'] },
+      colors: {
+        panel: { 900: '#0a1215', 800: '#0f1b1f', 700: '#142429', 600: '#1d3238', 500: '#2e4a52' },
+        petrol: { DEFAULT: '#00b3b3', soft: '#5fd8d2', deep: '#009999' },
+        led: { green: '#97C459' },
+        ink: { 100: '#eef4f4', 300: '#a9bcbe', 500: '#7f9699' },
+      },
+    } } };
+  </script>
+  <style>
+    body { background: #0a1215; }
+    .grid-bg { background-image: linear-gradient(rgba(0,179,179,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(0,179,179,.045) 1px, transparent 1px); background-size: 32px 32px; }
+    .led { width: 8px; height: 8px; border-radius: 9999px; display: inline-block; }
+    .led-on { background: #97C459; box-shadow: 0 0 8px #97C459; animation: pulse 2.4s ease-in-out infinite; }
+    .led-petrol { background: #00b3b3; box-shadow: 0 0 8px #00b3b3; }
+    @keyframes pulse { 50% { opacity: .45; } }
+    .caret::after { content: '▌'; margin-left: 2px; color: #00b3b3; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .reveal { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    .nav-link.active { color: #00b3b3; }
+    .chip[aria-pressed="true"] { border-color: #00b3b3; color: #00b3b3; background: rgba(0,179,179,.10); }
+    .skill.dimmed { opacity: .25; }
+    .job-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+    .job[data-open="true"] .job-body { grid-template-rows: 1fr; }
+    .job[data-open="true"] .chev { transform: rotate(90deg); }
+    :focus-visible { outline: 2px solid #00b3b3; outline-offset: 2px; }
+    ::selection { background: #009999; color: #ffffff; }
+    @media (prefers-reduced-motion: reduce) { .reveal, .job-body { transition: none; } .led-on, .caret::after { animation: none; } }
+  </style>
+</head>
+<body class="font-sans text-ink-100 antialiased grid-bg min-h-screen">
+  <header class="sticky top-0 z-40 border-t-[3px] border-t-petrol-deep border-b border-panel-600 bg-panel-900/90 backdrop-blur">
+    <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between font-mono text-xs">
+      <a href="#top" class="flex items-center gap-2"><span class="led led-on"></span><span>JP<span class="text-ink-500">://</span>controls</span></a>
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#about" class="nav-link text-ink-300 hover:text-petrol">about</a>
+        <a href="#skills" class="nav-link text-ink-300 hover:text-petrol">skills</a>
+        <a href="#experience" class="nav-link text-ink-300 hover:text-petrol">experience</a>
+        <a href="#projects" class="nav-link text-ink-300 hover:text-petrol">projects</a>
+        <a href="#contact" class="nav-link text-ink-300 hover:text-petrol">contact</a>
+      </nav>
+      <div class="hidden md:block text-ink-500" aria-hidden="true">SYS <span id="clock">--:--:--</span></div>
+      <button id="menuBtn" class="md:hidden border border-panel-500 rounded px-3 py-1.5 text-ink-300" aria-expanded="false" aria-controls="mobileNav">menu</button>
+    </div>
+    <nav id="mobileNav" class="md:hidden hidden border-t border-panel-600 font-mono text-sm">
+      <a href="#about" class="block px-4 py-3 text-ink-300 border-b border-panel-700">about</a>
+      <a href="#skills" class="block px-4 py-3 text-ink-300 border-b border-panel-700">skills</a>
+      <a href="#experience" class="block px-4 py-3 text-ink-300 border-b border-panel-700">experience</a>
+      <a href="#projects" class="block px-4 py-3 text-ink-300 border-b border-panel-700">projects</a>
+      <a href="#contact" class="block px-4 py-3 text-ink-300">contact</a>
+    </nav>
+  </header>
+
+  <main id="top" class="max-w-5xl mx-auto px-4">
+    <section class="pt-16 pb-20 md:pt-24 md:pb-24">
+      <div class="font-mono text-xs text-ink-500 mb-6 flex flex-wrap gap-x-6 gap-y-2">
+        <span><span class="led led-on mr-2"></span>system online</span>
+        <span><span class="led led-petrol mr-2"></span><span data-f="location"></span></span>
+      </div>
+      <h1 class="text-4xl md:text-6xl font-semibold tracking-tight" data-f="name"></h1>
+      <p class="font-mono text-petrol text-base md:text-lg mt-4">&gt; <span data-f="title"></span><span class="caret"></span></p>
+      <p class="font-mono text-xs text-ink-300 mt-3" id="focusLine"></p>
+      <p class="mt-6 max-w-2xl text-ink-300 leading-relaxed" data-f="summary"></p>
+      <div class="mt-8 flex flex-wrap gap-3 font-mono text-sm">
+        <a id="resume" class="px-5 py-2.5 rounded bg-petrol text-panel-900 font-semibold hover:bg-petrol-soft">download résumé ↓</a>
+        <a href="#experience" class="px-5 py-2.5 rounded border border-panel-500 hover:border-petrol hover:text-petrol">view experience</a>
+        <a href="#contact" class="px-5 py-2.5 rounded border border-panel-500 hover:border-petrol hover:text-petrol">get in touch</a>
+      </div>
+      <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-3 font-mono">
+        <div class="rounded-lg border border-panel-600 bg-panel-800 p-4"><div class="text-[11px] text-ink-500 uppercase tracking-wider">years in controls</div><div class="text-2xl mt-1"><span data-count="3">0</span>+</div></div>
+        <div class="rounded-lg border border-panel-600 bg-panel-800 p-4"><div class="text-[11px] text-ink-500 uppercase tracking-wider">hmi software</div><div class="text-xl mt-1">Qt / QML</div></div>
+        <div class="rounded-lg border border-panel-600 bg-panel-800 p-4"><div class="text-[11px] text-ink-500 uppercase tracking-wider">plc platforms</div><div class="text-xl mt-1">Siemens · CLICK</div></div>
+        <div class="rounded-lg border border-panel-600 bg-panel-800 p-4"><div class="text-[11px] text-ink-500 uppercase tracking-wider">standards</div><div class="text-xl mt-1">UL 508A</div></div>
+      </div>
+    </section>
+
+    <section id="about" class="py-16 border-t border-panel-600 reveal">
+      <h2 class="font-mono text-xs text-petrol uppercase tracking-widest mb-6">01 / about</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-2 space-y-4 text-ink-300 leading-relaxed">
+          <p>I work where hardware and software meet. At Wenger / JRC I program Siemens PLCs in TIA Portal, write load-learning and sensing algorithms in SCL and ladder, and build the Qt C++/QML apps and Python backends operators use every day.</p>
+          <p>Before that I designed UL 508A–compliant panels in AutoCAD Electrical, commissioned systems in the field, and trained end users. Internships at IBM and a full-stack studio gave me a software foundation I still lean on.</p>
+        </div>
+        <div class="rounded-lg border border-panel-600 bg-panel-800 p-5 font-mono text-sm">
+          <div class="text-[11px] text-ink-500 uppercase tracking-wider mb-3">education</div>
+          <div data-f="education.school"></div>
+          <div class="text-ink-300 mt-1" data-f="education.degree"></div>
+          <div class="text-ink-500 mt-3 text-xs" data-f="education.detail"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="py-16 border-t border-panel-600 reveal">
+      <h2 class="font-mono text-xs text-petrol uppercase tracking-widest mb-6">02 / skills</h2>
+      <div id="chips" class="flex flex-wrap gap-2 mb-6 font-mono text-xs" role="group" aria-label="Filter skills"></div>
+      <div id="skillGrid" class="flex flex-wrap gap-2 font-mono text-sm"></div>
+    </section>
+
+    <section id="experience" class="py-16 border-t border-panel-600 reveal">
+      <h2 class="font-mono text-xs text-petrol uppercase tracking-widest mb-6">03 / experience</h2>
+      <div id="jobs" class="space-y-3"></div>
+    </section>
+
+    <section id="projects" class="py-16 border-t border-panel-600 reveal">
+      <h2 class="font-mono text-xs text-petrol uppercase tracking-widest mb-6">04 / projects</h2>
+      <div id="projectGrid" class="grid md:grid-cols-2 gap-4"></div>
+    </section>
+
+    <section id="contact" class="py-16 border-t border-panel-600 reveal">
+      <h2 class="font-mono text-xs text-petrol uppercase tracking-widest mb-6">05 / contact</h2>
+      <div class="rounded-lg border border-panel-600 bg-panel-800 p-6 md:p-8">
+        <p class="text-2xl md:text-3xl font-medium">Let's build something.</p>
+        <p class="text-ink-300 mt-2">Happy to talk controls, embedded, and automation software.</p>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 font-mono text-sm">
+          <button id="copyEmail" class="flex items-center justify-between gap-4 rounded border border-panel-500 px-4 py-3 hover:border-petrol text-left"><span data-f="email"></span><span id="copyLabel" class="text-ink-500 text-xs">copy</span></button>
+          <a id="li" target="_blank" rel="noopener" class="rounded border border-panel-500 px-4 py-3 hover:border-petrol hover:text-petrol">linkedin ↗</a>
+          <a id="gh" target="_blank" rel="noopener" class="rounded border border-panel-500 px-4 py-3 hover:border-petrol hover:text-petrol">github ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-panel-600 mt-8">
+    <div class="max-w-5xl mx-auto px-4 py-6 font-mono text-xs text-ink-500 flex flex-wrap justify-between gap-2">
+      <span>© <span id="year"></span> Jebadiah Parillo</span><span><span class="led led-on mr-2"></span>all systems nominal</span>
+    </div>
+  </footer>
+
+  <script src="content.js"></script>
+  <script>
+    const S = window.SITE, $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+    const get = p => p.split('.').reduce((o, k) => o[k], S);
+    $$('[data-f]').forEach(el => el.textContent = get(el.dataset.f));
+    $('#li').href = S.linkedin; $('#gh').href = S.github;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    $('#chips').innerHTML = [{ id: 'all', label: 'all' }, ...S.skills].map((c, i) =>
+      `<button class="chip border border-panel-500 rounded px-3 py-1.5 text-ink-300" data-filter="${c.id}" aria-pressed="${i === 0}">${c.label.toLowerCase()}</button>`).join('');
+    $('#skillGrid').innerHTML = S.skills.flatMap(c => c.items.map(n =>
+      `<span class="skill rounded border border-panel-600 bg-panel-800 px-3 py-1.5 transition-opacity" data-cat="${c.id}">${n}</span>`)).join('');
+    $('#chips').addEventListener('click', e => {
+      const chip = e.target.closest('.chip'); if (!chip) return;
+      $$('.chip').forEach(c => c.setAttribute('aria-pressed', c === chip));
+      $$('.skill').forEach(s => s.classList.toggle('dimmed', chip.dataset.filter !== 'all' && s.dataset.cat !== chip.dataset.filter));
+    });
+
+    $('#jobs').innerHTML = S.experience.map((j, i) => `
+      <div class="job rounded-lg border border-panel-600 bg-panel-800" data-open="${i === 0}">
+        <button class="w-full flex items-start justify-between gap-4 p-5 text-left" aria-expanded="${i === 0}">
+          <div>
+            <div class="font-mono text-[11px] uppercase tracking-wider ${j.current ? 'text-led-green' : 'text-ink-500'}">${j.current ? '<span class="led led-on mr-2"></span>active · ' : ''}${j.start} – ${j.end}</div>
+            <div class="text-lg font-medium mt-1">${j.role}</div><div class="text-ink-300 text-sm">${j.company}</div>
+          </div>
+          <span class="chev font-mono text-petrol mt-6 transition-transform" aria-hidden="true">▸</span>
+        </button>
+        <div class="job-body"><div class="overflow-hidden"><ul class="px-5 pb-5 space-y-3 text-sm">
+          ${j.points.map(([t, d]) => `<li class="border-l-2 border-panel-500 pl-3"><span class="font-medium">${t}.</span> <span class="text-ink-300">${d}</span></li>`).join('')}
+        </ul></div></div>
+      </div>`).join('');
+    $('#jobs').addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const job = b.closest('.job'), open = job.dataset.open !== 'true';
+      job.dataset.open = open; b.setAttribute('aria-expanded', open);
+    });
+
+    $('#projectGrid').innerHTML = S.projects.map(p => `
+      <article class="rounded-lg border border-panel-600 bg-panel-800 p-5 hover:border-petrol/60 transition">
+        <div class="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider">
+          <span class="text-ink-500">${p.tags.join(' · ')}</span>
+          <span class="text-petrol flex items-center gap-2"><span class="led led-petrol"></span>${p.status}</span>
+        </div>
+        <h3 class="text-lg font-medium mt-3">${p.name}</h3>
+        <p class="text-ink-300 text-sm mt-2 leading-relaxed">${p.blurb}</p>
+      </article>`).join('');
+
+    $('#resume').href = S.resumeUrl; $('#resume').setAttribute('download', '');
+    $('#focusLine').textContent = S.focus.join('  ·  ');
+
+    $$('[data-count]').forEach(el => { const t = +el.dataset.count; if (reduce) { el.textContent = t; return; }
+      let n = 0; const step = () => { el.textContent = ++n; if (n < t) setTimeout(step, 120); }; setTimeout(step, 400); });
+    const tickClock = () => $('#clock').textContent = new Date().toLocaleTimeString([], { hour12: false });
+    tickClock(); setInterval(tickClock, 1000);
+    $('#year').textContent = new Date().getFullYear();
+
+    const menuBtn = $('#menuBtn'), mobileNav = $('#mobileNav');
+    menuBtn.addEventListener('click', () => { const open = !mobileNav.classList.toggle('hidden'); menuBtn.setAttribute('aria-expanded', open); menuBtn.textContent = open ? 'close' : 'menu'; });
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { mobileNav.classList.add('hidden'); menuBtn.textContent = 'menu'; menuBtn.setAttribute('aria-expanded', false); }));
+
+    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: .12 });
+    $$('.reveal').forEach(el => io.observe(el));
+    const spy = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) $$('.nav-link').forEach(l => l.classList.toggle('active', l.hash === '#' + e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+    $$('section[id]').forEach(s => spy.observe(s));
+
+    $('#copyEmail').addEventListener('click', async () => {
+      const l = $('#copyLabel');
+      try { await navigator.clipboard.writeText(S.email); l.textContent = 'copied ✓'; } catch { location.href = 'mailto:' + S.email; }
+      setTimeout(() => l.textContent = 'copy', 2000);
+    });
+  </script>
+</body>
+</html>
