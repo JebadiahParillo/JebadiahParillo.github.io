@@ -117,10 +117,5 @@ window.SITE = {
       tags: ['Mobile', 'Wake-on-LAN', 'Networking'],
       blurb: 'A phone app to turn a PC on and off over the network.',
     },
-    {
-      name: 'Kalshi near-close backtest', repo: 'JebadiahParillo/kalshi-backtest', status: 'Idea',
-      tags: ['Python', 'Backtesting', 'Prediction markets'],
-      blurb: 'Backtests a strategy of buying 95–99¢ Bitcoin contracts on Kalshi just before close for small, high-probability gains.',
-    },
   ],
 };
