@@ -24,6 +24,21 @@ Plain HTML, Tailwind (CDN), and vanilla JavaScript. No build step.
    ```
 3. GitHub Pages republishes in about a minute.
 
+## Project statuses
+
+Each entry in `projects` (in `content.js`) has a `repo` (`owner/name`). The page asks the GitHub API for that repo when it loads and sets the badge:
+
+| Badge | When |
+|---|---|
+| Released vX | the repo has a GitHub release |
+| Active | last push within 30 days |
+| In progress | last push 31–90 days ago |
+| Paused | no push for over 90 days |
+| Archived | the repo is archived |
+| *(the project's `status`)* | no public repo with that name yet |
+
+To bring an idea to life on the site, create a **public** repo with the name in its `repo` field. Private repos read as "not created yet."
+
 ## Preview locally
 
 Open `index.html` in a browser, or run:

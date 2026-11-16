@@ -177,15 +177,57 @@
       job.dataset.open = open; b.setAttribute('aria-expanded', open);
     });
 
-    $('#projectGrid').innerHTML = S.projects.map(p => `
-      <article class="rounded-lg border border-panel-600 bg-panel-800 p-5 hover:border-petrol/60 transition">
-        <div class="flex items-center justify-between font-mono text-[11px] uppercase tracking-wider">
+    // Project cards. Status is read live from each project's GitHub repo:
+    //   released (has a release) · active (pushed ≤ 30 days) · in progress (≤ 90 days)
+    //   paused (> 90 days) · archived (repo archived) · otherwise the fallback `status`.
+    const LED = { live: 'led led-on', petrol: 'led led-petrol', dim: 'led bg-ink-500', off: 'led border border-ink-500' };
+    const ago = d => { const days = Math.floor((Date.now() - new Date(d)) / 864e5);
+      return days < 1 ? 'today' : days === 1 ? 'yesterday' : days < 30 ? `${days}d ago` : days < 365 ? `${Math.floor(days / 30)}mo ago` : `${Math.floor(days / 365)}y ago`; };
+    const cacheGet = k => { try { const v = JSON.parse(sessionStorage.getItem(k)); return v && Date.now() - v.t < 6e5 ? v.d : null; } catch { return null; } };
+    const cacheSet = (k, d) => { try { sessionStorage.setItem(k, JSON.stringify({ t: Date.now(), d })); } catch {} };
+    async function repoStatus(repo) {
+      const key = 'gh:' + repo, hit = cacheGet(key); if (hit !== null) return hit;
+      const r = await fetch(`https://api.github.com/repos/${repo}`, { headers: { Accept: 'application/vnd.github+json' } });
+      if (r.status === 404) { cacheSet(key, false); return false; }      // no public repo yet
+      if (!r.ok) throw new Error(r.status);                             // rate-limited etc.
+      const j = await r.json(); let release = null;
+      try { const rr = await fetch(`https://api.github.com/repos/${repo}/releases/latest`); if (rr.ok) release = (await rr.json()).tag_name; } catch {}
+      const d = { url: j.html_url, pushed: j.pushed_at, archived: j.archived, issues: j.open_issues_count, release };
+      cacheSet(key, d); return d;
+    }
+    function statusOf(p, gh) {
+      if (!gh) return { label: p.status || 'Idea', led: /dev|progress/i.test(p.status) ? LED.petrol : LED.off, cls: 'text-ink-300', note: 'repo not created yet' };
+      const days = (Date.now() - new Date(gh.pushed)) / 864e5, note = `last commit ${ago(gh.pushed)}`;
+      if (gh.archived) return { label: 'Archived', led: LED.dim, cls: 'text-ink-500', note };
+      if (gh.release) return { label: `Released ${gh.release}`, led: LED.live, cls: 'text-led-green', note };
+      if (days <= 30) return { label: 'Active', led: LED.live, cls: 'text-led-green', note };
+      if (days <= 90) return { label: 'In progress', led: LED.petrol, cls: 'text-petrol', note };
+      return { label: 'Paused', led: LED.dim, cls: 'text-ink-500', note };
+    }
+    const repoUrl = p => `https://github.com/${p.repo}`;
+    $('#projectGrid').innerHTML = S.projects.map((p, i) => `
+      <article class="rounded-lg border border-panel-600 bg-panel-800 p-5 hover:border-petrol/60 transition flex flex-col" data-i="${i}">
+        <div class="flex items-start justify-between gap-3 font-mono text-[11px] uppercase tracking-wider">
           <span class="text-ink-500">${p.tags.join(' · ')}</span>
-          <span class="text-petrol flex items-center gap-2"><span class="led led-petrol"></span>${p.status}</span>
+          <a class="status shrink-0 flex items-center gap-2 text-ink-500 hover:underline" href="${repoUrl(p)}" target="_blank" rel="noopener" title="Status from GitHub"><span class="led border border-ink-500"></span>checking…</a>
         </div>
         <h3 class="text-lg font-medium mt-3">${p.name}</h3>
-        <p class="text-ink-300 text-sm mt-2 leading-relaxed">${p.blurb}</p>
+        <p class="text-ink-300 text-sm mt-2 leading-relaxed flex-1">${p.blurb}</p>
+        <div class="mt-4 pt-3 border-t border-panel-600 flex items-center justify-between gap-3 font-mono text-[11px] text-ink-500">
+          <span class="repo truncate">${p.repo}</span><span class="note shrink-0"></span>
+        </div>
       </article>`).join('');
+    S.projects.forEach((p, i) => {
+      const card = $(`#projectGrid [data-i="${i}"]`), el = card.querySelector('.status'), note = card.querySelector('.note');
+      const paint = st => { el.className = `status shrink-0 flex items-center gap-2 hover:underline ${st.cls}`; el.innerHTML = `<span class="${st.led}"></span>${st.label}`; note.textContent = st.note; };
+      if (!p.repo) return paint(statusOf(p, false));
+      repoStatus(p.repo).then(gh => {
+        paint(statusOf(p, gh));
+        if (!gh) { el.removeAttribute('href'); el.classList.remove('hover:underline'); el.title = 'No public repo yet'; }
+        else { card.querySelector('.repo').innerHTML = `<a class="hover:text-petrol" href="${gh.url}" target="_blank" rel="noopener">${p.repo} ↗</a>`;
+          if (gh.issues) note.textContent += ` · ${gh.issues} open`; }
+      }).catch(() => paint({ ...statusOf(p, false), note: 'github status unavailable' }));
+    });
 
     $('#resume').href = S.resumeUrl; $('#resume').setAttribute('download', '');
     $('#focusLine').textContent = S.focus.join('  ·  ');

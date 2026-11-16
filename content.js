@@ -63,14 +63,64 @@ window.SITE = {
     degree: 'B.S. Electrical & Computer Engineering',
     detail: 'Concentration in Electronics · Minor in Mathematics',
   },
+  // Each project's status comes live from its GitHub repo (see index.html).
+  // `repo` is owner/name. Until that repo exists (or while it's private), the card
+  // shows `status` instead. Create a public repo with that name and the card goes live.
   projects: [
     {
-      name: 'Bluetooth foot pedal', status: 'In development', tags: ['nRF', 'BLE HID', 'Windows'],
+      name: 'Personal website', repo: 'JebadiahParillo/JebadiahParillo.github.io', status: 'Idea',
+      tags: ['HTML', 'Tailwind', 'GitHub Pages'],
+      blurb: 'This site. Plain HTML and vanilla JS, with project statuses pulled live from GitHub.',
+    },
+    {
+      name: 'Bluetooth foot pedal', repo: 'JebadiahParillo/ble-foot-pedal', status: 'In development',
+      tags: ['nRF', 'BLE HID', 'Windows'],
       blurb: 'Wireless foot pedal on a Nordic nRF board that pairs with Windows, with a desktop app to remap each button. Documented for others to build.',
     },
     {
-      name: 'Multi-numpad mapper', status: 'In development', tags: ['USB HID', 'Raw Input', 'Windows'],
+      name: 'Multi-numpad mapper', repo: 'JebadiahParillo/multi-numpad-mapper', status: 'In development',
+      tags: ['USB HID', 'Raw Input', 'Windows'],
       blurb: 'Turns several USB numpads into independent macro pads, each with its own key mappings.',
+    },
+    {
+      name: 'Wireless HTR foot pedal', repo: 'JebadiahParillo/wireless-htr-pedal', status: 'Idea',
+      tags: ['Functional safety', 'Wireless', 'Hold-to-run'],
+      blurb: 'A safety-rated, wireless hold-to-run foot pedal for machine and stage motion control.',
+    },
+    {
+      name: 'Hoist collision vision', repo: 'JebadiahParillo/hoist-collision-vision', status: 'Idea',
+      tags: ['OpenCV', 'Encoders', 'Stage automation'],
+      blurb: 'Camera-based object detection for theatrical hoists. Combines vision with encoder data to send a stop signal before a load hits a set piece or a person.',
+    },
+    {
+      name: 'Universal PLC HMI', repo: 'JebadiahParillo/universal-plc-hmi', status: 'Idea',
+      tags: ['HMI', 'Modbus', 'EtherNet/IP', 'S7'],
+      blurb: 'An HMI that runs on any monitor and talks to PLCs over the common industrial protocols, with no vendor-locked panel hardware.',
+    },
+    {
+      name: 'Wiring schematic CAD', repo: 'JebadiahParillo/wiring-schematic-cad', status: 'Idea',
+      tags: ['CAD', 'Electrical design', 'UL 508A'],
+      blurb: 'Software in the spirit of AutoCAD Electrical, designed from the ground up for wiring schematics.',
+    },
+    {
+      name: 'Home automation planner', repo: 'JebadiahParillo/home-automation-planner', status: 'Idea',
+      tags: ['Smart home', 'Planning', 'Purchasing'],
+      blurb: 'Plan each room, and it works out what to buy, compares the products available, and offers temporary (renter-friendly) and permanent options.',
+    },
+    {
+      name: 'CarPlay customizer', repo: 'JebadiahParillo/carplay-customizer', status: 'Idea',
+      tags: ['iOS', 'Swift', 'CarPlay'],
+      blurb: 'An iOS app for customizing your CarPlay setup.',
+    },
+    {
+      name: 'PC power remote', repo: 'JebadiahParillo/pc-power-remote', status: 'Idea',
+      tags: ['Mobile', 'Wake-on-LAN', 'Networking'],
+      blurb: 'A phone app to turn a PC on and off over the network.',
+    },
+    {
+      name: 'Kalshi near-close backtest', repo: 'JebadiahParillo/kalshi-backtest', status: 'Idea',
+      tags: ['Python', 'Backtesting', 'Prediction markets'],
+      blurb: 'Backtests a strategy of buying 95–99¢ Bitcoin contracts on Kalshi just before close for small, high-probability gains.',
     },
   ],
 };
